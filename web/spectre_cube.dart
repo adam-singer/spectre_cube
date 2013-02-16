@@ -32,6 +32,7 @@ RasterizerState _skyboxRasterizerState;
 
 Float32Array _cameraTransform = new Float32Array(16);
 Float32Array _unitCubeTransform = new Float32Array(16);
+double translateX = 0.0, translateY = 0.0, translateZ = -2.0;
 void gameFrame(GameLoop gameLoop) {
   double dt = gameLoop.dt;
   cameraController.forwardVelocity = 25.0;
@@ -48,6 +49,31 @@ void gameFrame(GameLoop gameLoop) {
     cameraController.accumDX = gameLoop.mouse.dx;
     cameraController.accumDY = gameLoop.mouse.dy;
   }
+
+  if (gameLoop.keyboard.buttons[GameLoopKeyboard.RIGHT].down) {
+    translateX+=0.1;
+  }
+
+  if (gameLoop.keyboard.buttons[GameLoopKeyboard.LEFT].down) {
+    translateX-=0.1;
+  }
+
+  if (gameLoop.keyboard.buttons[GameLoopKeyboard.UP].down) {
+    translateY+=0.1;
+  }
+
+  if (gameLoop.keyboard.buttons[GameLoopKeyboard.DOWN].down) {
+    translateY-=0.1;
+  }
+
+  if (gameLoop.keyboard.buttons[GameLoopKeyboard.Z].down) {
+    translateZ+=0.1;
+  }
+
+  if (gameLoop.keyboard.buttons[GameLoopKeyboard.X].down) {
+    translateZ-=0.1;
+  }
+
   cameraController.UpdateCamera(gameLoop.dt, camera);
   // Update the debug draw manager state
   _debugDrawManager.update(dt);
@@ -171,6 +197,7 @@ void _setupCube() {
   _unitCubeDepthState.depthBufferFunction = CompareFunction.LessEqual;
 }
 
+
 void _drawCube() {
   var context = _graphicsDevice.context;
 
@@ -182,13 +209,12 @@ void _drawCube() {
   context.setSamplers(0, [_skyboxSampler]);
 
   mat4 P = camera.projectionMatrix;
+  //print(P.getTranslation());
+  P.setTranslation(new vec3(translateX, translateY, translateZ));
+  //print(P.getTranslation());
   mat4 LA = camera.lookAtMatrix;
   P.multiply(LA);
   P.copyIntoArray(_cameraTransform, 0);
-  //P = P.rotateX(new Random().nextDouble());
-  //P.copyIntoArray(_unitCubeTransform, 0);
-
-
 
   context.setConstant('cameraTransform', _cameraTransform);
   //context.setConstant('objectTransform', _unitCubeTransform);
