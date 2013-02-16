@@ -1,0 +1,6 @@
+name: spectre_cube
+description: A sample web application
+dependencies:
+  browser: any
+  spectre:
+    git: https://github.com/johnmccutchan/spectre.git
